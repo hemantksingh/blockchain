@@ -1,5 +1,4 @@
 import unittest
-import time
 import sys
 sys.path.append('src')
 from block import Block
@@ -7,13 +6,16 @@ from blockchain import BlockChain
 
 class BlockBuilder(object):
     def __init__(self):
-        self._index = 0
+        self._index=0
         self._previous_hash='0'
-        self._timestamp=int (time.time())
         self._data='first block'
 
     def index(self, index):
         self._index=index
+        return self
+
+    def previous_hash(self, previous_hash):
+        self._previous_hash = previous_hash
         return self
 
     def data(self, data):
@@ -24,7 +26,6 @@ class BlockBuilder(object):
         return Block(
             index=self._index,
             previous_hash=self._previous_hash,
-            timestamp=self._timestamp,
             data=self._data
         )
 
@@ -46,12 +47,12 @@ class TestBlockTest(unittest.TestCase):
 
     def test_valid_previous_hash(self):
         prev_block = BlockBuilder().build()
-        block = Block(index=1, previous_hash=prev_block.hash, timestamp=1, data='second block')
+        block = BlockBuilder().previous_hash(prev_block.hash).build()
         self.assertTrue(block.has_valid_previous_hash(prev_block))
 
     def test_invalid_previous_hash(self):
         prev_block = BlockBuilder().build()
-        block = Block(index=1, previous_hash='1', timestamp=1, data='second block')
+        block = BlockBuilder().previous_hash('invalid').build()
         self.assertFalse(block.has_valid_previous_hash(prev_block))
 
 class TestBlockChain(unittest.TestCase):
@@ -77,7 +78,6 @@ class TestBlockChain(unittest.TestCase):
         new_block = Block(
             index=prev_block.index+1,
             previous_hash=prev_block.hash,
-            timestamp=int (time.time()),
             data='second block')
         blockchain.add_block(new_block)
 
@@ -90,7 +90,6 @@ class TestBlockChain(unittest.TestCase):
         new_block = Block(
             index=3,
             previous_hash=prev_block.hash,
-            timestamp=int (time.time()),
             data='second block')
         blockchain.add_block(new_block)
 
@@ -103,7 +102,6 @@ class TestBlockChain(unittest.TestCase):
         new_block = Block(
             index=prev_block.index+1,
             previous_hash='0',
-            timestamp=int (time.time()),
             data='second block')
         blockchain.add_block(new_block)
 
@@ -116,7 +114,6 @@ class TestBlockChain(unittest.TestCase):
         new_block = Block(
             index=prev_block.index+1,
             previous_hash=prev_block.hash,
-            timestamp=int (time.time()),
             data='second block')
         new_block.hash = 'crap'
         blockchain.add_block(new_block)

@@ -1,11 +1,12 @@
+import time
 import hashlib
 
 class Block(object):
-    def __init__(self, index, previous_hash, timestamp, data):
+    def __init__(self, index, previous_hash, data, timestamp=int (time.time())):
         self.index = index
         self.previous_hash = previous_hash
-        self.timestamp = timestamp
         self.data = data
+        self.timestamp = timestamp
         self.hash = self.calc_hash()
 
     def __str__(self):

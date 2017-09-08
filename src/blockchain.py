@@ -1,4 +1,3 @@
-import time
 from block import Block
 
 class BlockChain(object):
@@ -16,7 +15,6 @@ class BlockChain(object):
         new_block = Block(
                 index=len(self.store),
                 previous_hash=self.latest_block().hash,
-                timestamp=int(time.time()),
                 data=data
             )
         self.store.append(new_block)
