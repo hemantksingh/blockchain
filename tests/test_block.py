@@ -1,4 +1,5 @@
 import unittest
+import time
 import sys
 sys.path.append('src')
 from block import Block
@@ -47,6 +48,58 @@ class TestBlockChain(unittest.TestCase):
         self.assertEqual(data, blockchain.latest_block().data)
         self.assertEqual(2, blockchain.size())
 
+    def test_adding_valid_new_block(self):
+        blockchain = BlockChain()
+        prev_block = blockchain.latest_block()
+        new_block = Block(
+            index=prev_block.index+1,
+            previous_hash=prev_block.hash,
+            timestamp=int (time.time()),
+            data='second block')
+        blockchain.add_block(new_block)
+
+        self.assertEqual('second block', blockchain.latest_block().data)
+        self.assertEqual(2, blockchain.size())
+
+    def test_new_block_with_invalid_index_not_added(self):
+        blockchain = BlockChain()
+        prev_block = blockchain.latest_block()
+        new_block = Block(
+            index=3,
+            previous_hash=prev_block.hash,
+            timestamp=int (time.time()),
+            data='second block')
+        blockchain.add_block(new_block)
+
+        self.assertEqual(1, blockchain.size())
+        self.assertNotEqual('second block', blockchain.latest_block().data)
+
+    def test_new_block_with_invalid_previous_hash_not_added(self):
+        blockchain = BlockChain()
+        prev_block = blockchain.latest_block()
+        new_block = Block(
+            index=prev_block.index+1,
+            previous_hash='0',
+            timestamp=int (time.time()),
+            data='second block')
+        blockchain.add_block(new_block)
+
+        self.assertEqual(1, blockchain.size())
+        self.assertNotEqual('second block', blockchain.latest_block().data)
+
+    def test_new_block_with_invalid_hash_not_added(self):
+        blockchain = BlockChain()
+        prev_block = blockchain.latest_block()
+        new_block = Block(
+            index=prev_block.index+1,
+            previous_hash=prev_block.hash,
+            timestamp=int (time.time()),
+            data='second block')
+        new_block.hash = 'crap'
+        blockchain.add_block(new_block)
+
+        self.assertEqual(1, blockchain.size())
+        self.assertNotEqual('second block', blockchain.latest_block().data)
 
 if __name__ == '__main__':
     unittest.main()
