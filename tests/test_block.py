@@ -2,6 +2,7 @@ import unittest
 import sys
 sys.path.append('src')
 from block import Block
+from blockchain import BlockChain
 
 class TestBlockTest(unittest.TestCase):
 
@@ -28,6 +29,24 @@ class TestBlockTest(unittest.TestCase):
         prev_block = Block(index=0, previous_hash='0', timestamp=1, data='first block')
         block = Block(index=1, previous_hash='1', timestamp=1, data='second block')
         self.assertFalse(block.has_valid_previous_hash(prev_block))
+
+class TestBlockChain(unittest.TestCase):
+
+    def test_initialise_blockchain(self):
+        blockchain = BlockChain()
+        block = blockchain.latest_block()
+
+        self.assertEqual(1, blockchain.size())
+        self.assertEqual('first block', block.data)
+
+    def test_generate_next_block(self):
+        data = 'this is the new block'
+        blockchain = BlockChain()
+        blockchain.generate_next_block(data)
+
+        self.assertEqual(data, blockchain.latest_block().data)
+        self.assertEqual(2, blockchain.size())
+
 
 if __name__ == '__main__':
     unittest.main()
