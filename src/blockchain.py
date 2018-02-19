@@ -23,15 +23,15 @@ class BlockChain(object):
         previous_block = self.latest_block()
 
         if not new_block.has_valid_index(previous_block):
-            print "Block has an invalid index"
+            print ("Block has an invalid index")
             return
 
         if not new_block.has_valid_previous_hash(previous_block):
-            print "Block has an invalid previous hash"
+            print ("Block has an invalid previous hash")
             return
 
         if not new_block.has_valid_hash():
-            print "Block has an invalid hash"
+            print ("Block has an invalid hash")
             return
 
         self.store.append(new_block)
